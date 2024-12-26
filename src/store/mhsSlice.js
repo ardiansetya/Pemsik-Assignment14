@@ -180,11 +180,9 @@ export const mhsSlice = createSlice({
     initialState,
     extraReducers:(builder)=>{
         builder.addCase(fetchMahasiswa.pending,(state)=>{
-            console.log("pending")
             state.loading = true;
             state.error = null;
         }).addCase(fetchMahasiswa.fulfilled,(state,action)=>{
-            console.log(action.payload)
             state.loading = false;
             state.data = action.payload;
         }).addCase(fetchMahasiswa.rejected,(state,action)=>{

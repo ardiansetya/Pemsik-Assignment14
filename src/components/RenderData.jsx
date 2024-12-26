@@ -14,7 +14,6 @@ import {
 const RenderData = () => {
   const dispatch = useDispatch();
   const { data:mahasiswa, loading, error } = useSelector((state) => state.mhs);
-  console.log(mahasiswa.length)
 
 
   const MySwal = withReactContent(Swal);
@@ -144,9 +143,11 @@ const RenderData = () => {
       confirmButtonText: "Yes, delete it!",
     });
 
+
     if (result.isConfirmed) {
       try {
-        await dispatch(deleteMahasiswa(id)).unwrap();
+        const response = await dispatch(deleteMahasiswa(id)).unwrap();
+        console.log(response)
         Swal.fire("Deleted!", "Data berhasil dihapus.", "success");
       } catch (error) {
         Swal.fire("Error!", "Terjadi kesalahan saat menghapus data.", "error");
