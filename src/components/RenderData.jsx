@@ -14,6 +14,7 @@ import {
 const RenderData = () => {
   const dispatch = useDispatch();
   const { data:mahasiswa, loading, error } = useSelector((state) => state.mhs);
+  console.log(mahasiswa.length)
 
 
   const MySwal = withReactContent(Swal);
@@ -23,7 +24,6 @@ const RenderData = () => {
     const token = localStorage.getItem("authToken");
     setIsLogin(!!token);
     dispatch(fetchMahasiswa());
-    console.log(dispatch(fetchMahasiswa()));
   }, [dispatch]);
 
 
@@ -197,8 +197,8 @@ const RenderData = () => {
             </tr>
           </thead>
           <tbody>
-            {mahasiswa.length > 0 ? (
-              mahasiswa.data.map((mhs) => (
+            {mahasiswa.data?.length > 0 ? (
+              mahasiswa.data?.map((mhs) => (
                 <tr
                   key={mhs.id}
                   className="border-b hover:bg-gray-50 transition">
