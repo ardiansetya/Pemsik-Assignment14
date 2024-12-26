@@ -4,11 +4,17 @@ import { useDispatch, useSelector } from "react-redux";
 import Button from "./Button";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
-import { addMahasiswa, deleteMahasiswa, editMahasiswa, fetchMahasiswa } from "../store/mhsSlice";
+import {
+  addMahasiswa,
+  deleteMahasiswa,
+  editMahasiswa,
+  fetchMahasiswa,
+} from "../store/mhsSlice";
 
 const RenderData = () => {
   const dispatch = useDispatch();
-  const { data: mahasiswa, loading } = useSelector((state) => state.mhs);
+  const { data:mahasiswa, loading, error } = useSelector((state) => state.mhs);
+
 
   const MySwal = withReactContent(Swal);
   const [isLogin, setIsLogin] = useState(false);
@@ -17,7 +23,9 @@ const RenderData = () => {
     const token = localStorage.getItem("authToken");
     setIsLogin(!!token);
     dispatch(fetchMahasiswa());
+    console.log(dispatch(fetchMahasiswa()));
   }, [dispatch]);
+
 
   const handleModal = async () => {
     const { value: formValues } = await MySwal.fire({
@@ -190,7 +198,7 @@ const RenderData = () => {
           </thead>
           <tbody>
             {mahasiswa.length > 0 ? (
-              mahasiswa.map((mhs) => (
+              mahasiswa.data.map((mhs) => (
                 <tr
                   key={mhs.id}
                   className="border-b hover:bg-gray-50 transition">
