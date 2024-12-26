@@ -1,24 +1,23 @@
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 import Button from "./Button";
-import { useDeleteMahasiswa, useFetchData, UsePostMhs, useUpdateMahasiswa } from "../hooks/UseFetchData";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
-import { useEffect, useState } from "react";
+import { addMahasiswa, deleteMahasiswa, editMahasiswa, fetchMahasiswa } from "../store/mhsSlice";
 
 const RenderData = () => {
-  const { mahasiswa, setMahasiswa } = useFetchData();
-  const { postData, loading } = UsePostMhs();
-  const { editDataMahasiswa } = useUpdateMahasiswa();
-  const { deleteDataMahasiswa } = useDeleteMahasiswa();
-
-
+  const dispatch = useDispatch();
+  const { data: mahasiswa, loading } = useSelector((state) => state.mhs);
 
   const MySwal = withReactContent(Swal);
   const [isLogin, setIsLogin] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
-    setIsLogin(!!token); 
-  }, []);
+    setIsLogin(!!token);
+    dispatch(fetchMahasiswa());
+  }, [dispatch]);
 
   const handleModal = async () => {
     const { value: formValues } = await MySwal.fire({
@@ -30,12 +29,14 @@ const RenderData = () => {
         <input id="swal-input-umur" type="number" class="swal2-input" placeholder="Umur">
         <input id="swal-input-progdi_id" class="swal2-input" placeholder="Progdi ID">
       `,
-      focusConfirm: false,
       preConfirm: () => {
         const nim = document.getElementById("swal-input-nim").value;
         const nama = document.getElementById("swal-input-nama").value;
         const alamat = document.getElementById("swal-input-alamat").value;
-        const umur = document.getElementById("swal-input-umur").value;
+        const umur = parseInt(
+          document.getElementById("swal-input-umur").value,
+          10
+        );
         const progdi_id = document.getElementById("swal-input-progdi_id").value;
 
         if (!nim || !nama || !alamat || !umur || !progdi_id) {
@@ -43,8 +44,8 @@ const RenderData = () => {
           return null;
         }
 
-        if (isNaN(umur)) {
-          MySwal.showValidationMessage("Umur harus berupa angka!");
+        if (isNaN(umur) || umur <= 0) {
+          MySwal.showValidationMessage("Umur harus berupa angka positif!");
           return null;
         }
 
@@ -54,31 +55,22 @@ const RenderData = () => {
 
     if (formValues) {
       try {
-        const response = await postData(formValues);
-        setMahasiswa((prevMahasiswa) => ({
-          ...prevMahasiswa,
-          data: [...prevMahasiswa.data, response.data],
-        }));
-        await Swal.fire(
-          "Berhasil!",
-          `Mahasiswa ${formValues.nama} berhasil ditambahkan.`,
-          "success"
-        );
+        await dispatch(addMahasiswa(formValues)).unwrap();
+        Swal.fire("Berhasil!", "Mahasiswa berhasil ditambahkan.", "success");
       } catch (error) {
         Swal.fire(
           "Error!",
-          error.response?.data?.message ||
-            "Terjadi kesalahan saat menambahkan data.",
+          "Terjadi kesalahan saat menambahkan data.",
           "error"
         );
       }
     }
   };
- const handleModalEdit = async (id, mhs) => {
-   try {
-     const { value: formValues } = await MySwal.fire({
-       title: "Edit mhs",
-       html: `
+
+  const handleModalEdit = async (id, mhs) => {
+    const { value: formValues } = await MySwal.fire({
+      title: "Edit Mahasiswa",
+      html: `
         <input id="swal-input-nim" class="swal2-input" placeholder="NIM" value="${
           mhs.nim || ""
         }">
@@ -95,119 +87,78 @@ const RenderData = () => {
           mhs.progdi_id || ""
         }">
       `,
-       focusConfirm: false,
-       preConfirm: () => {
-         const nim = document.getElementById("swal-input-nim").value.trim();
-         const nama = document.getElementById("swal-input-nama").value.trim();
-         const alamat = document
-           .getElementById("swal-input-alamat")
-           .value.trim();
-         const umur = parseInt(
-           document.getElementById("swal-input-umur").value.trim(),
-           10
-         );
-         const progdi_id = document
-           .getElementById("swal-input-progdi_id")
-           .value.trim();
+      preConfirm: () => {
+        const nim = document.getElementById("swal-input-nim").value;
+        const nama = document.getElementById("swal-input-nama").value;
+        const alamat = document.getElementById("swal-input-alamat").value;
+        const umur = parseInt(
+          document.getElementById("swal-input-umur").value,
+          10
+        );
+        const progdi_id = document.getElementById("swal-input-progdi_id").value;
 
-         if (!nim || !nama || !alamat || !umur || !progdi_id) {
-           MySwal.showValidationMessage("Semua field harus diisi!");
-           return null;
-         }
+        if (!nim || !nama || !alamat || !umur || !progdi_id) {
+          MySwal.showValidationMessage("Semua field harus diisi!");
+          return null;
+        }
 
-         if (isNaN(umur) || umur <= 0) {
-           MySwal.showValidationMessage("Umur harus berupa angka positif!");
-           return null;
-         }
+        if (isNaN(umur) || umur <= 0) {
+          MySwal.showValidationMessage("Umur harus berupa angka positif!");
+          return null;
+        }
 
-         return { nim, nama, alamat, umur, progdi_id };
-       },
-     });
+        return { nim, nama, alamat, umur, progdi_id };
+      },
+    });
 
-     if (!formValues) return;
-
-     const response = await editDataMahasiswa(id, formValues);
-
-
-     setMahasiswa((prevMahasiswa) => ({
-       ...prevMahasiswa,
-       data: prevMahasiswa.data.map((mahasiswa) =>
-         mahasiswa.id === id ? { ...mahasiswa, ...response.data } : mahasiswa
-       ),
-     }));
-
-     await MySwal.fire(
-       "Berhasil!",
-       `Data mahasiswa ${formValues.nama} berhasil diperbarui.`,
-       "success"
-     );
-   } catch (error) {
-     // Tangani error
-     MySwal.fire(
-       "Error!",
-       error.response?.data?.message ||
-         "Terjadi kesalahan saat mengupdate data.",
-       "error"
-     );
-   }
- };
-
-
-  const handleEdit = async (id) => {
-   
+    if (formValues) {
+      try {
+        await dispatch(editMahasiswa({ id, updatedData: formValues })).unwrap();
+        Swal.fire(
+          "Berhasil!",
+          "Data mahasiswa berhasil diperbarui.",
+          "success"
+        );
+      } catch (error) {
+        Swal.fire("Error!", "Terjadi kesalahan saat mengupdate data.", "error");
+      }
+    }
   };
 
   const handleDelete = async (id) => {
-    try {
-     
-     const result = await Swal.fire({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
-      })
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
 
-      if (result.isConfirmed) {
-        const response = await deleteDataMahasiswa(id);
-        console.log(response);
-        setMahasiswa((prevMahasiswa) => ({
-          ...prevMahasiswa,
-          data: prevMahasiswa.data.filter((item) => item.id !== id),
-        }));
-
-        Swal.fire({
-          title: "Deleted!",
-          text: "Your file has been deleted.",
-          icon: "success",
-        });
+    if (result.isConfirmed) {
+      try {
+        await dispatch(deleteMahasiswa(id)).unwrap();
+        Swal.fire("Deleted!", "Data berhasil dihapus.", "success");
+      } catch (error) {
+        Swal.fire("Error!", "Terjadi kesalahan saat menghapus data.", "error");
       }
-    } catch (error) {
-      Swal.fire(
-        "Error!",
-        error.response?.data?.message ||
-          "Terjadi kesalahan saat menghapus data.",
-        "error"
-      );
     }
-  }
-  
+  };
+
   return (
     <div className="bg-white shadow-md rounded-md p-4 mb-5 overflow-hidden">
       <div className="flex items-center justify-between gap-5">
         <h1 className="text-2xl font-bold text-gray-800 mb-4">
           Daftar Mahasiswa
         </h1>
-        {
-          isLogin ? ( <Button onClick={handleModal} disabled={loading}>
-          {loading ? "Loading..." : "Tambah Mahasiswa"}
-        </Button>): (
+        {isLogin ? (
+          <Button onClick={handleModal} disabled={loading}>
+            {loading ? "Loading..." : "Tambah Mahasiswa"}
+          </Button>
+        ) : (
           <p>Anda belum login</p>
-        )
-        }
-        
+        )}
       </div>
 
       <div className="mt-5">
@@ -238,8 +189,8 @@ const RenderData = () => {
             </tr>
           </thead>
           <tbody>
-            {mahasiswa?.data && mahasiswa.data.length > 0 ? (
-              mahasiswa.data.map((mhs) => (
+            {mahasiswa.length > 0 ? (
+              mahasiswa.map((mhs) => (
                 <tr
                   key={mhs.id}
                   className="border-b hover:bg-gray-50 transition">
@@ -262,15 +213,23 @@ const RenderData = () => {
                     {mhs.progdi?.nama || "-"}
                   </td>
                   <td className="border border-gray-300 px-4 py-2 text-gray-800 flex gap-3">
-                    <Button variant="secondary" onClick={() => handleModalEdit(mhs.id, mhs)}>Edit</Button>
-                    <Button variant="danger" onClick={() => handleDelete(mhs.id)}>Hapus</Button>
+                    <Button
+                      variant="secondary"
+                      onClick={() => handleModalEdit(mhs.id, mhs)}>
+                      Edit
+                    </Button>
+                    <Button
+                      variant="danger"
+                      onClick={() => handleDelete(mhs.id)}>
+                      Hapus
+                    </Button>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
                 <td
-                  colSpan="6"
+                  colSpan="7"
                   className="px-4 py-3 text-center text-gray-600 italic">
                   Data tidak ditemukan atau Anda belum login.
                 </td>
@@ -281,8 +240,6 @@ const RenderData = () => {
       </div>
     </div>
   );
-  
 };
-
 
 export default RenderData;
