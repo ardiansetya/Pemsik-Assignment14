@@ -150,8 +150,11 @@ const RenderData = () => {
         console.log(response)
         Swal.fire("Deleted!", "Data berhasil dihapus.", "success");
       } catch (error) {
-        Swal.fire("Error!", "Terjadi kesalahan saat menghapus data.", "error");
-      }
+   Swal.fire(
+     "Error!",
+     error.message || "Terjadi kesalahan saat mengupdate data.",
+     "error"
+   );      }
     }
   };
 
