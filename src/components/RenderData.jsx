@@ -13,8 +13,7 @@ import {
 
 const RenderData = () => {
   const dispatch = useDispatch();
-  const { data:mahasiswa, loading, error } = useSelector((state) => state.mhs);
-
+  const { data: mahasiswa, loading, error } = useSelector((state) => state.mhs);
 
   const MySwal = withReactContent(Swal);
   const [isLogin, setIsLogin] = useState(false);
@@ -24,7 +23,6 @@ const RenderData = () => {
     setIsLogin(!!token);
     dispatch(fetchMahasiswa());
   }, [dispatch]);
-
 
   const handleModal = async () => {
     const { value: formValues } = await MySwal.fire({
@@ -63,13 +61,13 @@ const RenderData = () => {
     if (formValues) {
       try {
         await dispatch(addMahasiswa(formValues)).unwrap();
-        Swal.fire("Berhasil!", "Mahasiswa berhasil ditambahkan.", "success");
       } catch (error) {
-        Swal.fire(
-          "Error!",
-          "Terjadi kesalahan saat menambahkan data.",
-          "error"
-        );
+                MySwal.fire(
+                  "Berhasil!",
+                  "Mahasiswa berhasil ditambahkan.",
+                  "success"
+                );
+
       }
     }
   };
@@ -121,13 +119,13 @@ const RenderData = () => {
     if (formValues) {
       try {
         await dispatch(editMahasiswa({ id, updatedData: formValues })).unwrap();
-        Swal.fire(
-          "Berhasil!",
-          "Data mahasiswa berhasil diperbarui.",
-          "success"
-        );
+       
       } catch (error) {
-        Swal.fire("Error!", "Terjadi kesalahan saat mengupdate data.", "error");
+         MySwal.fire(
+           "Berhasil!",
+           "Data mahasiswa berhasil diperbarui.",
+           "success"
+         );
       }
     }
   };
@@ -143,18 +141,12 @@ const RenderData = () => {
       confirmButtonText: "Yes, delete it!",
     });
 
-
     if (result.isConfirmed) {
       try {
-        const response = await dispatch(deleteMahasiswa(id)).unwrap();
-        console.log(response)
-        Swal.fire("Deleted!", "Data berhasil dihapus.", "success");
+        await dispatch(deleteMahasiswa(id)).unwrap();
       } catch (error) {
-   Swal.fire(
-     "Error!",
-     error.message || "Terjadi kesalahan saat mengupdate data.",
-     "error"
-   );      }
+        MySwal.fire("Deleted!", "Data berhasil dihapus.", "success");
+      }
     }
   };
 
