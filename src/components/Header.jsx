@@ -5,7 +5,7 @@ const Header = () => {
   const {user} = useSelector((state) => state.mhs)
   console.log(user.name)
   return (
-    <div className='sticky top-0 w-full'>
+    <div className='sticky top-0 '>
       <div className='flex justify-between items-center bg-slate-800 p-5 rounded-br-xl text-white'>
          <h1 className='text-2xl font-bold'>Welcome!</h1>
          <div>

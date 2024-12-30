@@ -3,6 +3,7 @@ import LoginPage from "../pages/LoginPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import RegisterPage from "../pages/RegisterPage";
 import DataMahasiswa from "../pages/DataMahasiswa";
+import ProtectedRoute from "./ProtectedRoute";
 
 const router = createBrowserRouter([
   {
@@ -17,7 +18,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/dashboard",
-    element: <DataMahasiswa />,
+    element: (
+      <ProtectedRoute>
+        <DataMahasiswa />,
+      </ProtectedRoute>
+    ),
     errorElement: <NotFoundPage />,
   },
 ]);
