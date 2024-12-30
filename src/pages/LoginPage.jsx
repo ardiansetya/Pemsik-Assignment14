@@ -1,13 +1,17 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { login } from "../store/mhsSlice";
 
 const MySwal = withReactContent(Swal);
 
-
 const LoginPage = () => {
+  
+  const dispatch = useDispatch();
+
   const navigate = useNavigate();
   const [form, setForm] = useState({
     email: "",
@@ -38,6 +42,10 @@ const LoginPage = () => {
           },
         }
       );
+      const { user, token } = response.data.data 
+      console.log(user.name)
+      dispatch(login({ user, token }));
+      
 
      const authToken = response.data.data.token;
      localStorage.setItem("authToken", authToken);

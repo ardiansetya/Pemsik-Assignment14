@@ -62,12 +62,7 @@ const RenderData = () => {
       try {
         await dispatch(addMahasiswa(formValues)).unwrap();
       } catch (error) {
-                MySwal.fire(
-                  "Berhasil!",
-                  "Mahasiswa berhasil ditambahkan.",
-                  "success"
-                );
-
+        MySwal.fire("Berhasil!", "Mahasiswa berhasil ditambahkan.", "success");
       }
     }
   };
@@ -119,13 +114,12 @@ const RenderData = () => {
     if (formValues) {
       try {
         await dispatch(editMahasiswa({ id, updatedData: formValues })).unwrap();
-       
       } catch (error) {
-         MySwal.fire(
-           "Berhasil!",
-           "Data mahasiswa berhasil diperbarui.",
-           "success"
-         );
+        MySwal.fire(
+          "Berhasil!",
+          "Data mahasiswa berhasil diperbarui.",
+          "success"
+        );
       }
     }
   };
@@ -151,96 +145,119 @@ const RenderData = () => {
   };
 
   return (
-    <div className="bg-white shadow-md rounded-md p-4 mb-5 overflow-hidden">
-      <div className="flex items-center justify-between gap-5">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">
+    <div className="bg-white shadow-md rounded-lg p-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+        <h1 className="text-lg sm:text-xl font-bold text-gray-800">
           Daftar Mahasiswa
         </h1>
-        {isLogin ? (
-          <Button onClick={handleModal} disabled={loading}>
-            {loading ? "Loading..." : "Tambah Mahasiswa"}
-          </Button>
-        ) : (
-          <p>Anda belum login</p>
-        )}
+        <div className="flex-shrink-0">
+          {isLogin ? (
+            <Button
+              onClick={handleModal}
+              disabled={loading}
+              className="text-sm px-3 py-1">
+              {loading ? "Loading..." : "Tambah Mahasiswa"}
+            </Button>
+          ) : (
+            <p className="text-sm text-gray-600">Anda belum login</p>
+          )}
+        </div>
       </div>
 
-      <div className="mt-5">
-        <table className="table-auto min-w-full border-collapse border border-gray-300 text-sm text-gray-700">
-          <thead>
-            <tr className="bg-gray-100 border-b">
-              <th className="border border-gray-300 px-4 py-2 text-left font-semibold text-gray-600">
-                ID
-              </th>
-              <th className="border border-gray-300 px-4 py-2 text-left font-semibold text-gray-600">
-                NIM
-              </th>
-              <th className="border border-gray-300 px-4 py-2 text-left font-semibold text-gray-600">
-                Nama
-              </th>
-              <th className="border border-gray-300 px-4 py-2 text-left font-semibold text-gray-600">
-                Alamat
-              </th>
-              <th className="border border-gray-300 px-4 py-2 text-left font-semibold text-gray-600">
-                Umur
-              </th>
-              <th className="border border-gray-300 px-4 py-2 text-left font-semibold text-gray-600">
-                Prodi
-              </th>
-              <th className="border border-gray-300 px-4 py-2 text-left font-semibold text-gray-600">
-                Action
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {mahasiswa.data?.length > 0 ? (
-              mahasiswa.data?.map((mhs) => (
-                <tr
-                  key={mhs.id}
-                  className="border-b hover:bg-gray-50 transition">
-                  <td className="border border-gray-300 px-4 py-2 text-gray-800">
-                    {mhs.id}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2 text-gray-800">
-                    {mhs.nim}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2 text-gray-800">
-                    {mhs.nama}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2 text-gray-800">
-                    {mhs.alamat}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2 text-gray-800">
-                    {mhs.umur}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2 text-gray-800">
-                    {mhs.progdi?.nama || "-"}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2 text-gray-800 flex gap-3">
-                    <Button
-                      variant="secondary"
-                      onClick={() => handleModalEdit(mhs.id, mhs)}>
-                      Edit
-                    </Button>
-                    <Button
-                      variant="danger"
-                      onClick={() => handleDelete(mhs.id)}>
-                      Hapus
-                    </Button>
+      <div className="max-w-full overflow-x-auto rounded-lg">
+        <div className="min-w-max">
+          <table className="w-full divide-y divide-gray-200">
+            <thead>
+              <tr>
+                <th
+                  scope="col"
+                  className="px-2 py-2 bg-gray-50 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-12">
+                  ID
+                </th>
+                <th
+                  scope="col"
+                  className="px-2 py-2 bg-gray-50 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-14">
+                  NIM
+                </th>
+                <th
+                  scope="col"
+                  className="px-2 py-2 bg-gray-50 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-14">
+                  Nama
+                </th>
+                <th
+                  scope="col"
+                  className="px-2 py-2 bg-gray-50 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-14">
+                  Alamat
+                </th>
+                <th
+                  scope="col"
+                  className="px-2 py-2 bg-gray-50 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-16">
+                  Umur
+                </th>
+                <th
+                  scope="col"
+                  className="px-2 py-2 bg-gray-50 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-32">
+                  Prodi
+                </th>
+                <th
+                  scope="col"
+                  className="px-2 py-2 bg-gray-50 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-32">
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {mahasiswa.data?.length > 0 ? (
+                mahasiswa.data?.map((mhs) => (
+                  <tr
+                    key={mhs.id}
+                    className="hover:bg-gray-50 transition-colors">
+                    <td className="px-2 py-2 whitespace-nowrap text-xs text-gray-900">
+                      {mhs.id}
+                    </td>
+                    <td className="px-2 py-2 whitespace-nowrap text-xs text-gray-900">
+                      {mhs.nim}
+                    </td>
+                    <td className="px-2 py-2 whitespace-nowrap text-xs text-gray-900">
+                      {mhs.nama}
+                    </td>
+                    <td className="px-2 py-2 text-xs text-gray-900">
+                      {mhs.alamat}
+                    </td>
+                    <td className="px-2 py-2 whitespace-nowrap text-xs text-gray-900">
+                      {mhs.umur}
+                    </td>
+                    <td className="px-2 py-2 whitespace-nowrap text-xs text-gray-900">
+                      {mhs.progdi?.nama || "-"}
+                    </td>
+                    <td className="px-2 py-2 whitespace-nowrap text-xs text-gray-900">
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="secondary"
+                          onClick={() => handleModalEdit(mhs.id, mhs)}>
+                          Edit
+                        </Button>
+                        <Button
+                          variant="danger"
+                          onClick={() => handleDelete(mhs.id)}>
+                          Hapus
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan="7"
+                    className="px-2 py-4 text-center text-xs text-gray-600 italic bg-gray-50">
+                    Data tidak ditemukan atau Anda belum login.
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td
-                  colSpan="7"
-                  className="px-4 py-3 text-center text-gray-600 italic">
-                  Data tidak ditemukan atau Anda belum login.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

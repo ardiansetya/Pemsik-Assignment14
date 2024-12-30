@@ -64,6 +64,8 @@ export const deleteMahasiswa = createAsyncThunk(
 
 // Slice Mahasiswa
 const initialState = {
+    user: '',
+    token:'',
     data: [],
     loading: false,
     error: null,
@@ -72,6 +74,16 @@ const initialState = {
 export const mhsSlice = createSlice({
     name: "mhs",
     initialState,
+    reducers: {
+        login: (state, action) => {
+            state.user = action.payload.user;
+            state.token = action.payload.token;
+        },
+        logout: (state) => {
+            state.user = null;
+            state.token = null;
+        },
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchMahasiswa.pending, (state) => {
@@ -124,5 +136,7 @@ export const mhsSlice = createSlice({
             });
     },
 });
+
+export const { login, logout } = mhsSlice.actions;
 
 export default mhsSlice.reducer;
