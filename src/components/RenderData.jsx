@@ -155,7 +155,7 @@ const RenderData = () => {
             <Button
               onClick={handleModal}
               disabled={loading}
-              className="text-sm px-3 py-1">
+          >
               {loading ? "Loading..." : "Tambah Mahasiswa"}
             </Button>
           ) : (
@@ -171,17 +171,17 @@ const RenderData = () => {
               <tr>
                 <th
                   scope="col"
-                  className="px-2 py-2 bg-gray-50 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-12">
+                  className="px-2 py-2 bg-gray-50 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-9">
                   ID
                 </th>
                 <th
                   scope="col"
-                  className="px-2 py-2 bg-gray-50 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-14">
+                  className="px-2 py-2 bg-gray-50 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-16">
                   NIM
                 </th>
                 <th
                   scope="col"
-                  className="px-2 py-2 bg-gray-50 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-14">
+                  className="px-2 py-2 bg-gray-50 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-32">
                   Nama
                 </th>
                 <th
